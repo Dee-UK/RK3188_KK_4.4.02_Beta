@@ -1,0 +1,53 @@
+.text:0x00000000		; =============== F U N C T I O N ====================================
+.text:0x00000000		
+.text:0x00000000		.text:
+.text:0x00000000	e3a02021	mov r2, #33 ; 0x21
+.text:0x00000004	e3003000	movw r3, #0
+.text:0x00000008	e1c020b4	strh r2, [r0, #4]
+.text:0x0000000c	e3403000	movt r3, #0
+.text:0x00000010	e3a02e2d	mov r2, #720 ; 0x2d0
+.text:0x00000014	e580302c	str r3, [r0, #44] ; 0x2c
+.text:0x00000018	e1c020ba	strh r2, [r0, #10]
+.text:0x0000001c	e3a03c05	mov r3, #1280 ; 0x500
+.text:0x00000020	e3a02ca3	mov r2, #41728 ; 0xa300
+.text:0x00000024	e1c030b8	strh r3, [r0, #8]
+.text:0x00000028	e34121e1	movt r2, #4577 ; 0x11e1
+.text:0x0000002c	e3a030d8	mov r3, #216 ; 0xd8
+.text:0x00000030	e580203c	str r2, [r0, #60] ; 0x3c
+.text:0x00000034	e3a02064	mov r2, #100 ; 0x64
+.text:0x00000038	e1c030bc	strh r3, [r0, #12]
+.text:0x0000003c	e3a03087	mov r3, #135 ; 0x87
+.text:0x00000040	e1c021bc	strh r2, [r0, #28]
+.text:0x00000044	e3a02012	mov r2, #18
+.text:0x00000048	e1c030be	strh r3, [r0, #14]
+.text:0x0000004c	e3053fc0	movw r3, #24512 ; 0x5fc0
+.text:0x00000050	e1c021be	strh r2, [r0, #30]
+.text:0x00000054	e340343b	movt r3, #1083 ; 0x43b
+.text:0x00000058	e3a02008	mov r2, #8
+.text:0x0000005c	e5803014	str r3, [r0, #20]
+.text:0x00000060	e1c022b2	strh r2, [r0, #34] ; 0x22
+.text:0x00000064	e3a0300a	mov r3, #10
+.text:0x00000068	e3a02001	mov r2, #1
+.text:0x0000006c	e1c032b0	strh r3, [r0, #32]
+.text:0x00000070	e1c020b0	strh r2, [r0]
+.text:0x00000074	e3a03006	mov r3, #6
+.text:0x00000078	e1c020b2	strh r2, [r0, #2]
+.text:0x0000007c	e1c032b4	strh r3, [r0, #36] ; 0x24
+.text:0x00000080	e3a03002	mov r3, #2
+.text:0x00000084	e1c032b6	strh r3, [r0, #38] ; 0x26
+.text:0x00000088	e3a03000	mov r3, #0
+.text:0x0000008c	e5c03038	strb r3, [r0, #56] ; 0x38
+.text:0x00000090	e5c03039	strb r3, [r0, #57] ; 0x39
+.text:0x00000094	e5c0303a	strb r3, [r0, #58] ; 0x3a
+.text:0x00000098	e5c0303b	strb r3, [r0, #59] ; 0x3b
+.text:0x0000009c	e5c03043	strb r3, [r0, #67] ; 0x43
+.text:0x000000a0	e5c03042	strb r3, [r0, #66] ; 0x42
+.text:0x000000a4	e5c03041	strb r3, [r0, #65] ; 0x41
+.text:0x000000a8	e5c03044	strb r3, [r0, #68] ; 0x44
+.text:0x000000ac	e5c03045	strb r3, [r0, #69] ; 0x45
+.text:0x000000b0	e12fff1e	bx lr
+.text:0x000000b4		; =============== F U N C T I O N ====================================
+.text:0x000000b4		
+.text:0x000000b4		get_fb_size:
+.text:0x000000b4	e3a0060b	mov r0, #11534336 ; 0xb00000
+.text:0x000000b8	e12fff1e	bx lr

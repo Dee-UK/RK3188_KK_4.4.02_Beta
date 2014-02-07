@@ -1,0 +1,39 @@
+choice
+	prompt "Rockchip SoC Type"
+	depends on ARCH_RK3188
+
+config SOC_RK3188
+	bool "RK3188"
+	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+
+config SOC_RK3188M
+	bool "RK3188M"
+	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+
+endchoice
+
+choice
+	prompt "RK3188 Board Type"
+	depends on SOC_RK3188
+
+config MACH_RK3188_TB
+	bool "RK3188 Top Board"
+
+config MACH_RK3188_SDK
+	bool "RK3188 sdk Board"
+
+config MACH_RK3188_FPGA
+	bool "RK3188 FPGA board"
+	select RK_FPGA
+
+config MACH_RK3188_LR097
+        bool "RK3188 LR097 JC21CA board"
+
+config MACH_RK3188_DS1006H
+	bool "RK3188 ds1006h board"
+        
+config MACH_RK3188_FAC
+        bool "RK3188 Board for factory"
+        select MACH_RK_FAC
+
+endchoice

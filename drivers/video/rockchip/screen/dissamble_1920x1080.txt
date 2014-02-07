@@ -1,0 +1,46 @@
+.text:0x00000000		; =============== F U N C T I O N ====================================
+.text:0x00000000		
+.text:0x00000000		.text:
+.text:0x00000000	e3a02d1e	mov r2, #1920 ; 0x780
+.text:0x00000004	e3003438	movw r3, #1080 ; 0x438
+.text:0x00000008	e1c020b8	strh r2, [r0, #8]
+.text:0x0000000c	e30d2c40	movw r2, #56384 ; 0xdc40
+.text:0x00000010	e1c030ba	strh r3, [r0, #10]
+.text:0x00000014	e34121b3	movt r2, #4531 ; 0x11b3
+.text:0x00000018	e30e3e20	movw r3, #60960 ; 0xee20
+.text:0x0000001c	e580203c	str r2, [r0, #60] ; 0x3c
+.text:0x00000020	e34038d9	movt r3, #2265 ; 0x8d9
+.text:0x00000024	e3a02094	mov r2, #148 ; 0x94
+.text:0x00000028	e5803014	str r3, [r0, #20]
+.text:0x0000002c	e3a03058	mov r3, #88 ; 0x58
+.text:0x00000030	e1c021bc	strh r2, [r0, #28]
+.text:0x00000034	e3a0202c	mov r2, #44 ; 0x2c
+.text:0x00000038	e1c031be	strh r3, [r0, #30]
+.text:0x0000003c	e3a03024	mov r3, #36 ; 0x24
+.text:0x00000040	e1c022b0	strh r2, [r0, #32]
+.text:0x00000044	e3a02005	mov r2, #5
+.text:0x00000048	e1c032b2	strh r3, [r0, #34] ; 0x22
+.text:0x0000004c	e3a03004	mov r3, #4
+.text:0x00000050	e1c020b0	strh r2, [r0]
+.text:0x00000054	e1c032b4	strh r3, [r0, #36] ; 0x24
+.text:0x00000058	e3a03000	mov r3, #0
+.text:0x0000005c	e1c022b6	strh r2, [r0, #38] ; 0x26
+.text:0x00000060	e1c030b4	strh r3, [r0, #4]
+.text:0x00000064	e1c030b2	strh r3, [r0, #2]
+.text:0x00000068	e1c030bc	strh r3, [r0, #12]
+.text:0x0000006c	e1c030be	strh r3, [r0, #14]
+.text:0x00000070	e5c03038	strb r3, [r0, #56] ; 0x38
+.text:0x00000074	e5c03039	strb r3, [r0, #57] ; 0x39
+.text:0x00000078	e5c0303a	strb r3, [r0, #58] ; 0x3a
+.text:0x0000007c	e5c0303b	strb r3, [r0, #59] ; 0x3b
+.text:0x00000080	e5c03043	strb r3, [r0, #67] ; 0x43
+.text:0x00000084	e5c03042	strb r3, [r0, #66] ; 0x42
+.text:0x00000088	e5c03041	strb r3, [r0, #65] ; 0x41
+.text:0x0000008c	e5c03044	strb r3, [r0, #68] ; 0x44
+.text:0x00000090	e5c03045	strb r3, [r0, #69] ; 0x45
+.text:0x00000094	e12fff1e	bx lr
+.text:0x00000098		; =============== F U N C T I O N ====================================
+.text:0x00000098		
+.text:0x00000098		get_fb_size:
+.text:0x00000098	e3a00506	mov r0, #25165824 ; 0x1800000
+.text:0x0000009c	e12fff1e	bx lr
