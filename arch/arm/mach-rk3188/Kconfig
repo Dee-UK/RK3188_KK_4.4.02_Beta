@@ -37,3 +37,10 @@ config MACH_RK3188_FAC
         select MACH_RK_FAC
 
 endchoice
+
+config RK3188T_OVERRIDE
+		bool "RK3188T override?"
+        depends on ARCH_RK3188
+        default n
+		help
+		  RK3188T fixed at 1.4GHz max by default, overide sets to 1.6GHz

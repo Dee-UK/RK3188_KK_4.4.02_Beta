@@ -102,9 +102,21 @@ int rk_pll_flag(void)
 {
 	return efuse_buf[22] & 0x3;
 }
+
 int rk_tflag(void)
 {
-	return efuse_buf[22] & (0x1 << 3);
+	/*
+	 * efuse_buf[22]
+	 * bit[4]:
+	 * 	0:RK3188T
+	 * 	1:RK3188
+	 */
+
+	int tflag = efuse_buf[22] & (0x1 << 3);
+	char *cputype = tflag ? "RK3188T" : "RK3188";
+	printk(KERN_INFO "CPU is ROCKCHIP %s\n", cputype);
+	
+	return tflag;
 }
 
 int efuse_version_val(void)
