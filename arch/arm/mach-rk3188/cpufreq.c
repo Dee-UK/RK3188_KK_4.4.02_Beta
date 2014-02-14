@@ -495,9 +495,9 @@ static int rk3188_cpufreq_init_cpu0(struct cpufreq_policy *policy)
 	if(rk_tflag()){
 
 #ifdef RK3188T_OVERRIDE
-#define RK3188_T_LIMIT_FREQ	1416 * 1000
-#else
 #define RK3188_T_LIMIT_FREQ	1608 * 1000
+#else
+#define RK3188_T_LIMIT_FREQ	1416 * 1000
 #endif
 
 		dvfs_clk_enable_limit(cpu_clk, 0, RK3188_T_LIMIT_FREQ * 1000);

@@ -2385,9 +2385,9 @@ static struct cpufreq_frequency_table dvfs_arm_table_volt_level2[] = {
 	//{.frequency = 1008 * 1000,      .index = 1075 * 1000},
 	{.frequency = 1200 * 1000,      .index = 1200 * 1000},
 	{.frequency = 1416 * 1000,      .index = 1250 * 1000},
-	//{.frequency = 1608 * 1000,      .index = 1350 * 1000},
-	{.frequency = 1704 * 1000,      .index = 1375 * 1000},
-	//{.frequency = 1800 * 1000,      .index = 1375 * 1000},
+	{.frequency = 1608 * 1000,      .index = 1350 * 1000},
+	//{.frequency = 1704 * 1000,      .index = 1375 * 1000},
+	{.frequency = 1800 * 1000,      .index = 1375 * 1000},
 	{.frequency = CPUFREQ_TABLE_END},
 };
 

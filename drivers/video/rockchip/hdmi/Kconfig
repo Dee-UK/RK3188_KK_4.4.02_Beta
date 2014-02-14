@@ -20,3 +20,15 @@ config RK_HDMI_CTL_CODEC
 		help
 			If you say y heres, Codec will be mute when hdmi inserted,
 			and unmute when removed. 
+
+choice HDMI_VIDEO
+                bool "Desktop resolution"
+                depends on RK_HDMI
+		default HDMI_1920
+config HDMI_1920
+		bool "1920x1080"
+		depends on RK_HDMI
+config HDMI_1280
+		bool "1280x720"
+		depends on RK_HDMI
+endchoice
