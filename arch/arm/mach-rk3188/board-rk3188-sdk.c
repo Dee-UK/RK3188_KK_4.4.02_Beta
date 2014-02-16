@@ -1183,19 +1183,27 @@ struct platform_device pwm_regulator_device[1] = {
 
 #endif
 
+// Set pins for 'normal' / J22
+#ifdef CONFIG_J22
+	#define FGPIO_PIN GPIO3_B5
+#else
+	#define FGPIO_PIN GPIO3_C7
+#endif
+
 #ifdef CONFIG_RFKILL_RK
 // bluetooth rfkill device, its driver in net/rfkill/rfkill-rk.c
+
 static struct rfkill_rk_platform_data rfkill_rk_platdata = {
     .type               = RFKILL_TYPE_BLUETOOTH,
 
     .poweron_gpio       = { // BT_REG_ON
-        .io             = INVALID_GPIO,//AP6630  RK30_PIN3_PC7, //J22 RK30_PIN3_PB5,
+        .io             = INVALID_GPIO,
         .enable         = GPIO_HIGH,
         .iomux          = {
             .name       = "bt_poweron",
-            .fgpio      = GPIO3_C7, //Normal C7, J22 B5
-        },
-    },
+            .fgpio      = FGPIO_PIN, //Normal RK30_PIN3_PC7, J22 RK30_PIN3_PB5
+        		   },
+    	},
 
     .reset_gpio         = { // BT_RST
         .io             = RK30_PIN3_PD1, // set io to INVALID_GPIO for disable it
@@ -1212,11 +1220,11 @@ static struct rfkill_rk_platform_data rfkill_rk_platdata = {
         .iomux          = {
             .name       = "bt_wake",
             .fgpio      = GPIO3_C6,
-        },
+        		},
     },
 
-    .wake_host_irq      = { // BT_HOST_WAKE, for bt wakeup host when it is in deep sleep
-        .gpio           = {
+   .wake_host_irq      = { // BT_HOST_WAKE, for bt wakeup host when it is in deep sleep
+         .gpio           = {
             .io         = RK30_PIN3_PC7,//yxg	RK30_PIN3_PD2, // set io to INVALID_GPIO for disable it
             .enable     = GPIO_LOW,      // set GPIO_LOW for falling, set 0 for rising
             .iomux      = {
@@ -2385,13 +2393,14 @@ static struct cpufreq_frequency_table dvfs_arm_table_volt_level2[] = {
 	//{.frequency = 1008 * 1000,      .index = 1075 * 1000},
 	{.frequency = 1200 * 1000,      .index = 1200 * 1000},
 	{.frequency = 1416 * 1000,      .index = 1250 * 1000},
+	//{.frequency = 1512 * 1000,      .index = 1300 * 1000},
 	{.frequency = 1608 * 1000,      .index = 1350 * 1000},
-	//{.frequency = 1704 * 1000,      .index = 1375 * 1000},
+	//{.frequency = 1704 * 1000,      .index = 1350 * 1000},
 	{.frequency = 1800 * 1000,      .index = 1375 * 1000},
 	{.frequency = CPUFREQ_TABLE_END},
 };
 
-/******************************** gpu dvfs frequency volt table **********************************/
+/******************************** gpu dvfs ̣frequency volt table **********************************/
 //sdk
 static struct cpufreq_frequency_table dvfs_gpu_table_volt_level0[] = {	
 	{.frequency = 133 * 1000,       .index = 975 * 1000},//the mininum rate is limited 133M for rk3188
@@ -2423,7 +2432,12 @@ static struct cpufreq_frequency_table dvfs_ddr_table_volt_level0[] = {
 };
 static struct cpufreq_frequency_table dvfs_ddr_table_t[] = {
 	{.frequency = 200 * 1000 + DDR_FREQ_SUSPEND,    .index = 950 * 1000},
+	{.frequency = 300 * 1000 + DDR_FREQ_VIDEO,      .index = 1000 * 1000},
+#ifdef CONFIG_RK3188T_OVERRIDE
+	{.frequency = 720 * 1000 + DDR_FREQ_NORMAL,     .index = 1200 * 1000},
+#else
 	{.frequency = 460 * 1000 + DDR_FREQ_NORMAL,     .index = 1200 * 1000},
+#endif
 	{.frequency = CPUFREQ_TABLE_END},
 };
 //if you board is good for volt quality,select dvfs_arm_table_volt_level0

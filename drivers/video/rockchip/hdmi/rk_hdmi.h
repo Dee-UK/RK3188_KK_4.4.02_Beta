@@ -19,7 +19,7 @@
 #include <linux/rk_fb.h>
 
 /* default HDMI output video mode */
-#ifdef HDMI_1920
+#ifdef CONFIG_HDMI_1920
 #define HDMI_VIDEO_DEFAULT_MODE			HDMI_1920x1080p_60Hz
 #else
 #define HDMI_VIDEO_DEFAULT_MODE			HDMI_1280x720p_60Hz

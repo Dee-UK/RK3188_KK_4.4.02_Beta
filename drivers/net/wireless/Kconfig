@@ -166,6 +166,19 @@ choice
 endchoice
 
 choice
+	depends on RKWIFI && WLAN_80211 && AP6210
+	prompt "Alternate GPIO"
+	default CONFIG_NORMAL_GPIO
+
+	config J22
+		bool "J22 GPIO"
+
+	config NORMAL_GPIO
+		bool "Normal GPIO"
+
+endchoice
+
+choice
 	depends on RKWIFI && WLAN_80211
 	prompt "Select the wifi module crystal freq"
 	default RKWIFI_26M

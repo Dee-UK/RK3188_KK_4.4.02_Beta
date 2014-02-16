@@ -494,10 +494,12 @@ static int rk3188_cpufreq_init_cpu0(struct cpufreq_policy *policy)
 
 	if(rk_tflag()){
 
-#ifdef RK3188T_OVERRIDE
-#define RK3188_T_LIMIT_FREQ	1608 * 1000
+#ifdef CONFIG_RK3188T_OVERRIDE
+	#define RK3188_T_LIMIT_FREQ	1608 * 1000
+//	#define RK3188_T_LIMIT_FREQ	1704 * 1000
+//	#define RK3188_T_LIMIT_FREQ	1800 * 1000
 #else
-#define RK3188_T_LIMIT_FREQ	1416 * 1000
+	#define RK3188_T_LIMIT_FREQ	1416 * 1000
 #endif
 
 		dvfs_clk_enable_limit(cpu_clk, 0, RK3188_T_LIMIT_FREQ * 1000);
@@ -513,7 +515,6 @@ static int rk3188_cpufreq_init_cpu0(struct cpufreq_policy *policy)
 #ifdef CPU_FREQ_DVFS_TST
 	queue_delayed_work(freq_wq, &rk3188_cpufreq_dvsf_tst_work, msecs_to_jiffies(20 * 1000));
 #endif
-
 	printk("rk3188 cpufreq version " VERSION ", suspend freq %d MHz\n", suspend_freq / 1000);
 	return 0;
 }
