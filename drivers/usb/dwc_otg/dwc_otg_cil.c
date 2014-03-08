@@ -722,12 +722,8 @@ void dwc_otg_core_dev_init(dwc_otg_core_if_t *_core_if)
     dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[0], 0x01000220 );	//ep1 tx fifo
     dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[1], 0x00100320 );	//ep3 tx fifo
     dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[2], 0x00800330 );	//ep5 tx fifo
-#else
-
-#if !(defined(CONFIG_ARCH_RK30)  || defined(CONFIG_ARCH_RK3188) || \
-      defined(CONFIG_ARCH_RK2928)|| defined(CONFIG_ARCH_RK3026) )
-    DWC_ERROR("Warning!!! Please Check USB Controller FIFO Configuration\n");
-#endif    
+#endif
+#if defined(CONFIG_ARCH_RK30) || defined(CONFIG_ARCH_RK3188)
 	/* Configure data FIFO sizes, RK30 otg has 0x3cc dwords total */
     dwc_write_reg32( &global_regs->grxfsiz, 0x00000120 );
     dwc_write_reg32( &global_regs->gnptxfsiz, 0x00100120 );				//ep0 tx fifo
@@ -737,7 +733,16 @@ void dwc_otg_core_dev_init(dwc_otg_core_if_t *_core_if)
     dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[3], 0x00800330 );	//ep7 tx fifo
     dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[4], 0x001003b0 );	//ep9 tx fifo
 #endif
-
+#ifdef CONFIG_ARCH_RK2928  
+    /* Configure data FIFO sizes, RK30 otg has 0x3cc dwords total */
+    dwc_write_reg32( &global_regs->grxfsiz, 0x00000120 );
+    dwc_write_reg32( &global_regs->gnptxfsiz, 0x00100120 );             //ep0 tx fifo 
+    dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[0], 0x01000130 );   //ep1 tx fifo 256*4Byte
+    dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[1], 0x00800230 );   //ep3 tx fifo 128*4Byte
+    dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[2], 0x008002b0 );   //ep5 tx fifo 128*4Byte
+    dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[3], 0x00800330 );   //ep7 tx fifo 128*4Byte
+    dwc_write_reg32( &global_regs->dptxfsiz_dieptxf[4], 0x001003b0 );   //ep9 tx fifo 16*4Byte
+#endif
 	if(_core_if->en_multiple_tx_fifo && _core_if->dma_enable)
 	{
 		dev_if->non_iso_tx_thr_en = _core_if->core_params->thr_ctl & 0x1;
@@ -2240,10 +2245,7 @@ void dwc_otg_ep_start_transfer(dwc_otg_core_if_t *_core_if, dwc_ep_t *_ep)
 				(_ep->xfer_len - 1 + _ep->maxpacket) / 
 				_ep->maxpacket;
 		}
-		if (_ep->type == DWC_OTG_EP_TYPE_ISOC)
-		{
-		    deptsiz.b.mc = 1;
-		}
+
 		dwc_write_reg32(&in_regs->dieptsiz, deptsiz.d32);
 
 		/* Write the DMA register */
@@ -2282,19 +2284,7 @@ void dwc_otg_ep_start_transfer(dwc_otg_core_if_t *_core_if, dwc_ep_t *_ep)
 				}
 			}
 		}
-		if (_ep->type == DWC_OTG_EP_TYPE_ISOC) 
-		{
-			dsts_data_t dsts = {.d32 = 0 };
-			dsts.d32 = dwc_read_reg32(&_core_if->dev_if->dev_global_regs->dsts);
-			if (dsts.b.soffn & 0x1) 
-			{
-				depctl.b.setd0pid = 1;
-			} 
-			else 
-			{
-				depctl.b.setd1pid = 1;
-			}
-		}
+				
 		/* EP enable, IN data in FIFO */
 		depctl.b.cnak = 1;
 		depctl.b.epena = 1;
@@ -2591,8 +2581,8 @@ void dwc_otg_ep0_continue_transfer(dwc_otg_core_if_t *_core_if, dwc_ep_t *_ep)
 		/* Write the DMA register */
 		if (_core_if->hwcfg2.b.architecture == DWC_INT_DMA_ARCH) 
 		{
-			dwc_write_reg32 (&(in_regs->diepdma), (uint32_t)_ep->dma_addr);
-			_ep->dma_addr += _ep->maxpacket;
+			dwc_write_reg32 (&(in_regs->diepdma), 
+					 (uint32_t)_ep->dma_addr);
 		}
 
 		/* EP enable, IN data in FIFO */
@@ -2960,7 +2950,6 @@ void dwc_otg_core_reset(dwc_otg_core_if_t *_core_if)
 				greset.d32);
 			break;
 		}
-		UDELAY(1);
 	} 
 	while (greset.b.csftrst == 1);		  
 

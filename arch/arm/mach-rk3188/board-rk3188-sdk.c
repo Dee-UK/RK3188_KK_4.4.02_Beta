@@ -78,6 +78,9 @@
 #if defined(CONFIG_MT6229)
 #include <linux/mt6229.h>
 #endif
+#if defined (CONFIG_RK_REMOTECTL)
+#include "../include/mach/remotectl.h"
+#endif
 #if defined(CONFIG_ANDROID_TIMED_GPIO)
 #include "../../../drivers/staging/android/timed_gpio.h"
 #endif
@@ -784,6 +787,29 @@ static struct platform_device rk29_device_gpio_leds = {
 };
 #endif
 
+/*$_rbox_$_modify_$_huangzhibao begin*/
+#ifdef CONFIG_RK_REMOTECTL
+void rk30_remotectl_iomux(void)
+{
+	;
+}
+
+struct RKxx_remotectl_platform_data rk30_remotectl_pdata = {
+    .gpio	=   RK30_PIN0_PB2, 
+    .wakeup	= 1,
+    .rep    = 0,
+    .set_iomux = rk30_remotectl_iomux,    
+};
+
+static struct platform_device rk30_device_remotectl = {
+	.name		= "rkxx-remotectl",
+	.id		= -1,
+	.dev		= {
+		.platform_data	= &rk30_remotectl_pdata,
+	},
+};
+#endif
+
 #ifdef CONFIG_RK_IRDA
 #define IRDA_IRQ_PIN           INVALID_GPIO //RK30_PIN0_PA3
 
@@ -1183,12 +1209,6 @@ struct platform_device pwm_regulator_device[1] = {
 
 #endif
 
-// Set pins for 'normal' / J22
-#ifdef CONFIG_J22
-	#define FGPIO_PIN GPIO3_B5
-#else
-	#define FGPIO_PIN GPIO3_C7
-#endif
 
 #ifdef CONFIG_RFKILL_RK
 // bluetooth rfkill device, its driver in net/rfkill/rfkill-rk.c
@@ -1201,7 +1221,16 @@ static struct rfkill_rk_platform_data rfkill_rk_platdata = {
         .enable         = GPIO_HIGH,
         .iomux          = {
             .name       = "bt_poweron",
-            .fgpio      = FGPIO_PIN, //Normal RK30_PIN3_PC7, J22 RK30_PIN3_PB5
+            //Normal RK30_PIN3_PC7, J22 RK30_PIN3_PB5, TVBOX RK30_PIN3_PD0
+#ifdef CONFIG_J22
+	    .fgpio      = RK30_PIN3_PB5,
+#else 
+#ifdef CONFIG_RFKILL_RK_POWERON_PIN3_PD0 
+	    .fgpio      = RK30_PIN3_PD0,
+#else
+	    .fgpio      = RK30_PIN3_PC7,
+#endif
+#endif
         		   },
     	},
 
@@ -1428,6 +1457,10 @@ static struct platform_device *devices[] __initdata = {
 #endif
 #ifdef CONFIG_GPS_RK
 	&rk_device_gps,
+#endif
+/*$_rbox_$_modify_$_huangzhibao_begin$_20120508_$*/
+#ifdef CONFIG_RK_REMOTECTL	
+    &rk30_device_remotectl,
 #endif
 #if defined(CONFIG_ARCH_RK3188)
 	&device_mali,
@@ -1776,16 +1809,22 @@ static struct pmu_info  act8846_dcdc_info[] = {
 
 	},
 	{
-		.name          = "act_dcdc4",   //vccio
-		.min_uv          = 3000000,
-		.max_uv         = 3000000,
-		#ifdef CONFIG_ACT8846_SUPPORT_RESET
-		.suspend_vol  =  3000000,
+	        .name          = "act_dcdc4",   //vccio 
+		//SAW special voltage for QX1, from Leolas
+		#ifdef CONFIG_ACT8846_DCDC4_30V
+	        .min_uv        = 3000000,
+	        .max_uv        = 3000000,
 		#else
-		.suspend_vol  =  2800000,
+	        .min_uv         = 3300000,
+	        .max_uv         = 3300000,
 		#endif
+	        #ifdef CONFIG_ACT8846_SUPPORT_RESET
+	        .suspend_vol  =  3000000,
+        	#else
+        	.suspend_vol  =  2800000,
+        	#endif
+    	},
 
-	},
 	
 };
 static  struct pmu_info  act8846_ldo_info[] = {
@@ -1815,9 +1854,16 @@ static  struct pmu_info  act8846_ldo_info[] = {
 		.max_uv         = 3300000,
 	},
 	{
-		.name          = "act_ldo6",   //vcc33
-		.min_uv          = 3300000,
-		.max_uv         = 3300000,
+	        .name          = "act_ldo6",   //vcc_jetta
+//SAW volt set via kernel config, default 3300000, mk908 and some others
+//need 1800000 to get wifi/bt working properly
+//#ifdef CONFIG_ACT8846_LDO6_18V
+	        .min_uv         = 1800000, 
+	        .max_uv         = 1800000, 
+/*#else
+	        .min_uv        = 3300000,
+	        .max_uv        = 3300000,
+#endif*/
 	},
 	{
 		.name          = "act_ldo7",   //vccio_wl
@@ -2387,13 +2433,13 @@ static struct cpufreq_frequency_table dvfs_arm_table_volt_level1[] = {
 };
 // cube 10'
 static struct cpufreq_frequency_table dvfs_arm_table_volt_level2[] = {
-	//{.frequency = 312 * 1000,       .index = 900 * 1000},
-	//{.frequency = 504 * 1000,       .index = 925 * 1000},
-	//{.frequency = 816 * 1000,       .index = 1000 * 1000},
-	//{.frequency = 1008 * 1000,      .index = 1075 * 1000},
+//	{.frequency = 312 * 1000,       .index = 900 * 1000},
+//	{.frequency = 504 * 1000,       .index = 925 * 1000},
+	{.frequency = 816 * 1000,       .index = 1000 * 1000},
+	{.frequency = 1008 * 1000,      .index = 1075 * 1000},
 	{.frequency = 1200 * 1000,      .index = 1200 * 1000},
 	{.frequency = 1416 * 1000,      .index = 1250 * 1000},
-	//{.frequency = 1512 * 1000,      .index = 1300 * 1000},
+	//{.frequency = 1512 * 1000,      .index = 1325 * 1000},
 	{.frequency = 1608 * 1000,      .index = 1350 * 1000},
 	//{.frequency = 1704 * 1000,      .index = 1350 * 1000},
 	{.frequency = 1800 * 1000,      .index = 1375 * 1000},
@@ -2430,20 +2476,52 @@ static struct cpufreq_frequency_table dvfs_ddr_table_volt_level0[] = {
 	//{.frequency = 528 * 1000 + DDR_FREQ_NORMAL,     .index = 1200 * 1000},
 	{.frequency = CPUFREQ_TABLE_END},
 };
-static struct cpufreq_frequency_table dvfs_ddr_table_t[] = {
-	{.frequency = 200 * 1000 + DDR_FREQ_SUSPEND,    .index = 950 * 1000},
-	{.frequency = 300 * 1000 + DDR_FREQ_VIDEO,      .index = 1000 * 1000},
-#ifdef CONFIG_RK3188T_OVERRIDE
-	{.frequency = 720 * 1000 + DDR_FREQ_NORMAL,     .index = 1200 * 1000},
-#else
-	{.frequency = 460 * 1000 + DDR_FREQ_NORMAL,     .index = 1200 * 1000},
-#endif
+
+
+// RK3188T frequencies
+static struct cpufreq_frequency_table dvfs_arm_table_t[]= {
+	{.frequency = 312 * 1000,       .index = 900 * 1000},
+	{.frequency = 504 * 1000,       .index = 925 * 1000},
+	{.frequency = 816 * 1000,       .index = 1000 * 1000},
+	{.frequency = 1008 * 1000,      .index = 1075 * 1000},
+	{.frequency = 1200 * 1000,      .index = 1200 * 1000},
+	{.frequency = 1416 * 1000,      .index = 1250 * 1000},
+	//{.frequency = 1512 * 1000,      .index = 1325 * 1000},
+	//{.frequency = 1608 * 1000,      .index = 1350 * 1000},
+	//{.frequency = 1704 * 1000,      .index = 1350 * 1000},
+	//{.frequency = 1800 * 1000,      .index = 1375 * 1000},
 	{.frequency = CPUFREQ_TABLE_END},
 };
+
+//RK3188T GPU frequencies
+static struct cpufreq_frequency_table dvfs_gpu_table_t[] = {	
+	{.frequency = 133 * 1000,       .index = 975 * 1000},//the mininum rate is limited 133M for rk3188
+	{.frequency = 200 * 1000,       .index = 1000 * 1000},
+	{.frequency = 266 * 1000,       .index = 1025 * 1000},
+	{.frequency = 300 * 1000,       .index = 1050 * 1000},
+	{.frequency = 400 * 1000,       .index = 1100 * 1000},
+	{.frequency = 600 * 1000,       .index = 1250 * 1000},
+	{.frequency = CPUFREQ_TABLE_END},
+};
+
+static struct cpufreq_frequency_table dvfs_ddr_table_t[] = {
+	{.frequency = 200 * 1000 + DDR_FREQ_SUSPEND,    .index = 950 * 1000},
+//	{.frequency = 300 * 1000 + DDR_FREQ_VIDEO,      .index = 1000 * 1000},
+	{.frequency = 528 * 1000 + DDR_FREQ_NORMAL,     .index = 1250 * 1000},
+	{.frequency = CPUFREQ_TABLE_END},
+};
+
+
+#if defined(CONFIG_RK3188T_OVERRIDE)
 //if you board is good for volt quality,select dvfs_arm_table_volt_level0
-#define dvfs_arm_table dvfs_arm_table_volt_level2
-#define dvfs_gpu_table dvfs_gpu_table_volt_level1
-#define dvfs_ddr_table dvfs_ddr_table_volt_level0
+ #define dvfs_gpu_table dvfs_gpu_table_t
+ #define dvfs_ddr_table dvfs_ddr_table_t
+ #define dvfs_arm_table dvfs_arm_table_t
+#else
+ #define dvfs_ddr_table dvfs_ddr_table_volt_level0
+ #define dvfs_gpu_table dvfs_gpu_table_volt_level1
+ #define dvfs_arm_table dvfs_arm_table_volt_level2
+#endif
 
 #else
 //for RK3168 && RK3066B
@@ -2485,10 +2563,10 @@ void __init board_clock_init(void)
 	//dvfs_set_arm_logic_volt(dvfs_cpu_logic_table, cpu_dvfs_table, dep_cpu2core_table);	
 	dvfs_set_freq_volt_table(clk_get(NULL, "cpu"), dvfs_arm_table);
 	dvfs_set_freq_volt_table(clk_get(NULL, "gpu"), dvfs_gpu_table);
-#if defined(CONFIG_ARCH_RK3188)
-	if (rk_pll_flag() == 0)
-		dvfs_set_freq_volt_table(clk_get(NULL, "ddr"), dvfs_ddr_table);
-	else
+#if defined(CONFIG_RK3188T_OVERRIDE)
+//	if (rk_pll_flag() == 0)
+//		dvfs_set_freq_volt_table(clk_get(NULL, "ddr"), dvfs_ddr_table);
+//	else
 		dvfs_set_freq_volt_table(clk_get(NULL, "ddr"), dvfs_ddr_table_t);
 #else
 	dvfs_set_freq_volt_table(clk_get(NULL, "ddr"), dvfs_ddr_table);

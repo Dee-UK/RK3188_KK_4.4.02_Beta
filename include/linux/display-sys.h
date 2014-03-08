@@ -39,6 +39,14 @@ struct rk_display_ops {
 	int (*getscale)(struct rk_display_device *, int);
 };
 
+struct rkdisplay_platform_data {
+	int property;			//display screen property: main display or aux display.
+	int video_source;		//display screen video source
+	int io_pwr_pin;			//power control gpio
+	int io_reset_pin;		//reset control gpio
+	int io_switch_pin;		//cvbs/ypbpr output switch gpio
+};
+
 struct rk_display_device {
 	struct module *owner;			/* Owner module */
 	struct rk_display_driver *driver;

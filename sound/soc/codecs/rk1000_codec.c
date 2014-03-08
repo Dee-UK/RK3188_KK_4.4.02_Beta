@@ -1131,6 +1131,10 @@ static int rk1000_control_remove(struct i2c_client *client)
 	return 0;
 }
 
+void codec_set_spk (bool on)
+{
+}
+
 static const struct i2c_device_id rk1000_control_id[] = {
 	{ "rk1000_control", 0 },
 	{ }

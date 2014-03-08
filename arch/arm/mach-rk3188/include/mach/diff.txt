@@ -1,0 +1,8 @@
+55c55
+< 	GPIO1_C0 = 0x1c00, I2S0_CLK, 
+---
+> 	GPIO1_C0 = 0x1c00, I2S0_MCLK, 
+57c57
+< 	GPIO1_C2 = 0x1c20, I2S0_LRCLKRX, 
+---
+> 	GPIO1_C2 = 0x1c20, I2S0_LRCKRX, 

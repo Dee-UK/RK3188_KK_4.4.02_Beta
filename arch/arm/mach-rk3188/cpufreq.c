@@ -494,13 +494,8 @@ static int rk3188_cpufreq_init_cpu0(struct cpufreq_policy *policy)
 
 	if(rk_tflag()){
 
-#ifdef CONFIG_RK3188T_OVERRIDE
-	#define RK3188_T_LIMIT_FREQ	1608 * 1000
-//	#define RK3188_T_LIMIT_FREQ	1704 * 1000
-//	#define RK3188_T_LIMIT_FREQ	1800 * 1000
-#else
-	#define RK3188_T_LIMIT_FREQ	1416 * 1000
-#endif
+
+/*	#define RK3188_T_LIMIT_FREQ	1608 * 1000
 
 		dvfs_clk_enable_limit(cpu_clk, 0, RK3188_T_LIMIT_FREQ * 1000);
 		for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++) {
@@ -508,7 +503,7 @@ static int rk3188_cpufreq_init_cpu0(struct cpufreq_policy *policy)
 				printk("cpufreq: delete arm freq(%u)\n", freq_table[i].frequency);
 				freq_table[i].frequency = CPUFREQ_TABLE_END;
 			}
-		}
+		}*/
 	}
 	freq_wq = alloc_workqueue("rk3188_cpufreqd", WQ_NON_REENTRANT | WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_FREEZABLE, 1);
 	rk3188_cpufreq_temp_limit_init(policy);

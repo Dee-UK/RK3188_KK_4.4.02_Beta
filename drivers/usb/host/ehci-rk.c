@@ -29,7 +29,8 @@
 
 #include <mach/gpio.h>
 #include "ehci.h"
-#include "../dwc_otg/usbdev_rk.h"
+//#include "../dwc_otg/usbdev_rk.h"
+#include "usbdev_rk.h"
 
 static int rkehci_status = 1;
 static struct ehci_hcd *g_ehci;
