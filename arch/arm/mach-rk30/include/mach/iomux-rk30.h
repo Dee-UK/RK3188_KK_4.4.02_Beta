@@ -1,7 +1,7 @@
 #ifndef __MACH_RK30_IOMUX_H
 #define __MACH_RK30_IOMUX_H
 #include <mach/io.h>
-#include <plat/iomux.h>
+//#include <plat/iomux.h>
 #if defined(CONFIG_ARCH_RK3066B)
 
 #define GRF_IOMUX_BASE	(RK30_GRF_BASE + 0x0060)

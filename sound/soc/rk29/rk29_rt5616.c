@@ -19,12 +19,12 @@
 #include <sound/soc-dapm.h>
 #include <asm/io.h>
 #include <mach/hardware.h>
-#include "../codecs/rt5616.h"
+#include "../codecs/rt5631.h"
 #include "rk29_pcm.h"
 #include "rk29_i2s.h"
 
 #if 0
-#define	DBG(x...)	printk(KERN_INFO x)
+:#define	DBG(x...)	printk(KERN_INFO x)
 #else
 #define	DBG(x...)
 #endif
@@ -137,8 +137,8 @@ static int rk29_hw_params(struct snd_pcm_substream *substream,
         return 0;
 }
 
-static const struct snd_soc_dapm_widget rt5616_dapm_widgets[] = {
-
+static const struct snd_soc_dapm_widget rt5631_dapm_widgets[] = {
+	
 	SND_SOC_DAPM_MIC("Mic Jack", NULL),
 	SND_SOC_DAPM_SPK("Ext Spk", NULL),
 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
@@ -162,7 +162,7 @@ static const struct snd_soc_dapm_route audio_map[]={
 /*
  * Logic for a rt5631 as connected on a rockchip board.
  */
-static int rk29_rt5616_init(struct snd_soc_pcm_runtime *rtd)
+static int rk29_rt5631_init(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_soc_codec *codec = rtd->codec;
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
@@ -170,8 +170,8 @@ static int rk29_rt5616_init(struct snd_soc_pcm_runtime *rtd)
         DBG("Enter::%s----%d\n",__FUNCTION__,__LINE__);
 
         /* Add specific widgets */
-	snd_soc_dapm_new_controls(dapm, rt5616_dapm_widgets,
-			ARRAY_SIZE(rt5616_dapm_widgets));
+	snd_soc_dapm_new_controls(dapm, rt5631_dapm_widgets,
+				  ARRAY_SIZE(rt5631_dapm_widgets));
 	DBG("Enter::%s----%d\n",__FUNCTION__,__LINE__);
         /* Set up specific audio path audio_mapnects */
         snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
@@ -203,7 +203,7 @@ static struct snd_soc_dai_link rk29_dai = {
 	.cpu_dai_name = "rk29_i2s.2",
 #endif
 	.codec_dai_name = "rt5616-aif1",
-	.init = rk29_rt5616_init,
+	.init = rk29_rt5631_init,
 	.ops = &rk29_ops,
 };
 

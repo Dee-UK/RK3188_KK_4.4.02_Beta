@@ -97,6 +97,10 @@ static void *wifi_status_cb_devid;
 #define RK29SDK_WIFI_SDIO_CARD_INT         RK30SDK_WIFI_GPIO_WIFI_INT_B
 #endif
 
+        //power
+        #define RK30SDK_WIFI_GPIO_POWER_N                   RK30_PIN3_PD0            
+        #define RK30SDK_WIFI_GPIO_POWER_ENABLE_VALUE        GPIO_HIGH        
+
 struct rksdmmc_gpio_wifi_moudle  rk_platform_wifi_gpio = {
     .power_n = {
             .io             = RK30SDK_WIFI_GPIO_POWER_N, 

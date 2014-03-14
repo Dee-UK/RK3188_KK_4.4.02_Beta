@@ -439,12 +439,11 @@ static ssize_t force_usb_mode_store(struct device_driver *_drv, const char *_buf
 
 	switch(new_mode)
 	{
-		case USB_MODE_FORCE_HOST:   
+		case USB_MODE_FORCE_HOST:
 			if(USB_MODE_FORCE_DEVICE == core_if->usb_mode)
 			{/* device-->host */
 				core_if->usb_mode = new_mode;
-				dwc_otg_force_host(core_if);  
-				//dwc_otg_force_device(core_if);  //modify by nition
+				dwc_otg_force_host(core_if);
 			}
 			else if(USB_MODE_NORMAL == core_if->usb_mode)
 			{
@@ -461,13 +460,11 @@ static ssize_t force_usb_mode_store(struct device_driver *_drv, const char *_buf
 			else
 			    core_if->usb_mode = new_mode;
 			break;
-		case USB_MODE_FORCE_DEVICE:   
+		case USB_MODE_FORCE_DEVICE:
 			if(USB_MODE_FORCE_HOST == core_if->usb_mode)
 			{
 				core_if->usb_mode = new_mode;
-				dwc_otg_force_device(core_if); 
-				//dwc_otg_force_host(core_if);  //modify by nition
-				
+				dwc_otg_force_device(core_if);
 			}
 			else if(USB_MODE_NORMAL == core_if->usb_mode)
 			{
@@ -1161,13 +1158,6 @@ static __devinit int dwc_otg_driver_probe(struct platform_device *pdev)
 	int32_t snpsid;
 	int irq;
 	struct dwc_otg_platform_data *pldata = dev->platform_data;
-
-
-#ifdef CONFIG_ARCH_RK3188
-	unsigned int * USB_GRF_UOC0_CON0 = (unsigned int*)(RK30_GRF_BASE+0x10c);
-	/* usb phy enter usb mode  */
-	* USB_GRF_UOC0_CON0 = (0x0300 << 16);
-#endif
 
     // clock and hw init
     if(pldata->hw_init)

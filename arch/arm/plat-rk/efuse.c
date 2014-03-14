@@ -114,8 +114,8 @@ int rk_tflag(void)
 
 	int tflag = efuse_buf[22] & (0x1 << 3);
 	char *cputype = tflag ? "RK3188T" : "RK3188";
-	printk(KERN_INFO "CPU is ROCKCHIP %s\n", cputype);
-	printk(KERN_INFO "NEOMODE the eFuses are (22) = %x and (23) = %x\n", efuse_buf[22], efuse_buf[23]);
+	printk(KERN_INFO "D33Info: CPU is ROCKCHIP %s\n", cputype);
+	printk(KERN_INFO "D33Info: eFuses are set to (22) = %x and (23) = %x\n", efuse_buf[22], efuse_buf[23]);
 	
 	return tflag;
 }
