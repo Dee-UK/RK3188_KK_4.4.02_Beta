@@ -168,13 +168,13 @@ endchoice
 choice
 	depends on RKWIFI && WLAN_80211 && AP6210
 	prompt "Alternate GPIO"
-	default CONFIG_NORMAL_GPIO
-
-	config J22
-		bool "J22 GPIO"
+	default NORMAL_GPIO
 
 	config NORMAL_GPIO
-		bool "Normal GPIO"
+		bool "Normal"
+
+	config J22_GPIO
+		bool "J22"
 
 endchoice
 

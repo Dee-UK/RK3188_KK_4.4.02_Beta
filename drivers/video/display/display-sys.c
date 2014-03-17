@@ -222,6 +222,33 @@ static int display_resume(struct device *dev)
 	return 0;
 };
 
+int display_add_videomode(const struct fb_videomode *mode, struct list_head *head)
+{
+	struct list_head *pos;
+	struct display_modelist *modelist;
+	struct fb_videomode *m;
+	int found = 0;
+
+	list_for_each(pos, head) {
+		modelist = list_entry(pos, struct display_modelist, list);
+		m = &modelist->mode;
+		if (fb_mode_is_equal(m, mode)) {
+			found = 1;
+			break;
+		}
+	}
+	if (!found) {
+		modelist = kmalloc(sizeof(struct display_modelist),
+						  GFP_KERNEL);
+
+		if (!modelist)
+			return -ENOMEM;
+		modelist->mode = *mode;
+		list_add(&modelist->list, head);
+	}
+	return 0;
+}
+
 void rk_display_device_enable(struct rk_display_device *ddev)
 {
 #ifndef CONFIG_DISPLAY_AUTO_SWITCH	

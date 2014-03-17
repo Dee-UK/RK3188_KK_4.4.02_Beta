@@ -31,15 +31,19 @@
 #include <trace/events/asoc.h>
 #include <mach/gpio.h>
 #include <mach/iomux.h>
+#include <linux/display-sys.h>
 
 #include "rk1000_codec.h"
+
 #define RK1000_CODEC_PROC
+
 #ifdef RK1000_CODEC_PROC
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/vmalloc.h>
 char debug_write_read = 0;
 #endif
+
 /*
  * Debug
  */
@@ -89,6 +93,8 @@ struct rk1000_codec_priv {
 	struct snd_soc_codec codec;
 	struct snd_pcm_hw_constraint_list *sysclk_constraints;
 	u16 reg_cache[RK1000_CODEC_NUM_REG];
+	int io_pwr_pin;
+ 	int io_spk_pin;
 };
 
 /*
@@ -501,6 +507,9 @@ static int rk1000_codec_pcm_startup(struct snd_pcm_substream *substream,
 	return 0;
 }
 
+static int gAudioNLPCM=0;
+static int rk1000_codec_mute(struct snd_soc_dai *dai, int mute);
+
 static int rk1000_codec_pcm_hw_params(struct snd_pcm_substream *substream,
 				struct snd_pcm_hw_params *params,
 				struct snd_soc_dai *dai)
@@ -517,6 +526,15 @@ static int rk1000_codec_pcm_hw_params(struct snd_pcm_substream *substream,
 	/*by Vincent Hsiung for EQ Vol Change*/
 	#define HW_PARAMS_FLAG_EQVOL_ON 0x21
 	#define HW_PARAMS_FLAG_EQVOL_OFF 0x22
+
+	DBG("params->flags: %d\n", params->flags);
+	if(HW_PARAMS_FLAG_NLPCM == params->flags)
+	{
+		gAudioNLPCM=1;
+	}else if(HW_PARAMS_FLAG_LPCM == params->flags){
+		gAudioNLPCM=0;
+ 	}
+
 	if (params->flags == HW_PARAMS_FLAG_EQVOL_ON)
 	{
 		u16 r17 = rk1000_codec_read_reg_cache(codec, ACCELCODEC_R17);
@@ -586,8 +604,8 @@ static int rk1000_codec_pcm_hw_params(struct snd_pcm_substream *substream,
 void PhaseOut(struct snd_soc_codec *codec,u32 nStep, u32 us)
 {
         DBG("%s[%d]\n",__FUNCTION__,__LINE__); 
-        rk1000_codec_write(codec,ACCELCODEC_R17, 0x00|ASC_OUTPUT_ACTIVE|ASC_CROSSZERO_EN);  //AOL
-        rk1000_codec_write(codec,ACCELCODEC_R18, 0x00|ASC_OUTPUT_ACTIVE|ASC_CROSSZERO_EN);  //AOR
+        rk1000_codec_write(codec,ACCELCODEC_R17, 0x00|ASC_OUTPUT_MUTE|ASC_CROSSZERO_EN);  //AOL
+        rk1000_codec_write(codec,ACCELCODEC_R18, 0x00|ASC_OUTPUT_MUTE|ASC_CROSSZERO_EN);  //AOR
         udelay(us);
 }
 
@@ -604,9 +622,18 @@ static int rk1000_codec_mute(struct snd_soc_dai *dai, int mute)
 	struct snd_soc_codec *codec = dai->codec;
 
 	DBG("Enter::%s----%d--mute=%d\n",__FUNCTION__,__LINE__,mute);
-    
+
+	if(gAudioNLPCM)
+		mute=1; 
+   
 	if (mute)
 	{
+
+		u16 r04 = rk1000_codec_read_reg_cache(codec, ACCELCODEC_R04);
+		if(r04 & 0x3){
+			return 0;
+		}
+
 		PhaseOut(codec,1, 5000);
 		rk1000_codec_write(codec,ACCELCODEC_R19, 0xFF);  //AOM
 		rk1000_codec_write(codec,ACCELCODEC_R04, ASC_INT_MUTE_L|ASC_INT_MUTE_R|ASC_SIDETONE_L_OFF|ASC_SIDETONE_R_OFF);  //soft mute   
@@ -1113,7 +1140,7 @@ static int rk1000_control_probe(struct i2c_client *client,
 	
 	msleep(50);
 	ret = reg_send_data(client, 0x00, data, 4, 100 * 1000);
-#if 1
+#if 0 // DRDR
     printk("i2c write ret = 0x%x\n",ret);
 	memset(data,0,sizeof(data));
     ret = i2c_master_reg8_recv(client, 0, data, (int)4, 20*1000);

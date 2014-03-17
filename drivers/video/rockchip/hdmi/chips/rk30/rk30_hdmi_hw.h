@@ -22,13 +22,15 @@ enum {
 #define N_96K		0x3000
 #define N_192K 		0x6000
 
-#define LR_SWAP_N3			0x04
-#define N_2					0x08
-#define N_1					0x0c
+#define LR_SWAP_N3		0x04
+#define N_2			0x08
+#define N_1			0x0c
 
-#define AUDIO_CTRL1			0x28
+#define AUDIO_CTRL1		0x28
 #define AUDIO_CTRL2 		0x2c
 #define I2S_AUDIO_CTRL		0x30
+#define AUDIO_STA_BIT_CTRL2     0X48 //added to fix NLPCM bug DR 15/03/2014
+
 enum {
 	I2S_MODE_STANDARD = 0,
 	I2S_MODE_RIGHT_JUSTIFIED,

@@ -550,7 +550,14 @@ int rk30_hdmi_config_audio(struct hdmi_audio *audio)
     HDMIWrReg(N_1, N & 0xFF);
     HDMIWrReg(N_2, (N >> 8) & 0xFF);
     HDMIWrReg(LR_SWAP_N3, (N >> 16) & 0x0F); 
-    
+
+//	added to fix NLPCM bug 15/03/2014 DR
+    if(HDMI_AUDIO_NLPCM == audio->type){
+        HDMIWrReg(AUDIO_STA_BIT_CTRL2, 0X80);
+    }else{
+        HDMIWrReg(AUDIO_STA_BIT_CTRL2, 0X00);
+    }
+	    
     rk30_hdmi_config_aai();
     return 0;
 }

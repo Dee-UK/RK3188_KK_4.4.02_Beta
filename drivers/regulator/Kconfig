@@ -301,6 +301,12 @@ config ACT8846_SUPPORT_RESET
 	help
 	  Support short press key to restart.
 
+config ACT8846_LDO6_33
+	bool "LDO6 voltage overide to 3.3V?"
+	depends on REGULATOR_ACT8846=y
+	default n
+	help
+		This is for devices requiring 1.8V to operate 
 
 config RK29_PWM_REGULATOR
 	tristate "rk2918 pwm voltage regulator"

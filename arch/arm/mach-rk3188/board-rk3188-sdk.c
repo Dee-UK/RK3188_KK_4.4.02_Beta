@@ -49,11 +49,15 @@
 #include <linux/mfd/rk808.h>
 #include <linux/regulator/rk29-pwm-regulator.h>
 #include <plat/ddr.h>
+#include <plat/efuse.h>
+#include "../mach-rk30/board-rk3168-tb-camera.c"
+
+//wifi defined in arch/arm/mach-rk30/board-RK3168-sdmmc-config.c
 
 #ifdef CONFIG_CW2015_BATTERY
 #include <linux/power/cw2015_battery.h>
 #endif
-#include <plat/efuse.h>
+
 
 #if defined(CONFIG_MFD_RK610)
 #include <linux/mfd/rk610_core.h>
@@ -66,21 +70,27 @@
 #if defined(CONFIG_SPIM_RK29)
 #include "../../../drivers/spi/rk29_spim.h"
 #endif
+
 #if defined(CONFIG_GPS_RK)
 #include "../../../drivers/misc/gps/rk_gps/rk_gps.h"
 #endif
+
 #if defined(CONFIG_MU509)
 #include <linux/mu509.h>
 #endif
+
 #if defined(CONFIG_MW100)
 #include <linux/mw100.h>
 #endif
+
 #if defined(CONFIG_MT6229)
 #include <linux/mt6229.h>
 #endif
+
 #if defined (CONFIG_RK_REMOTECTL)
 #include "../include/mach/remotectl.h"
 #endif
+
 #if defined(CONFIG_ANDROID_TIMED_GPIO)
 #include "../../../drivers/staging/android/timed_gpio.h"
 #endif
@@ -88,13 +98,12 @@
 #if defined(CONFIG_MT6620)
 #include <linux/gps.h>
 #endif
-#include "../mach-rk30/board-rk3168-tb-camera.c"
 
 #if defined(CONFIG_TOUCHSCREEN_GT8XX)
 #define TOUCH_RESET_PIN  RK30_PIN0_PB6
 #define TOUCH_PWR_PIN    RK30_PIN0_PC5   // need to fly line by hardware engineer
 
-/* Android Parameter */
+/* Android Parameter for TOUCHSCREEN_GT8XX*/
 static int ap_mdm = 0;
 module_param(ap_mdm, int, 0644);
 static int ap_has_alsa = 0;
@@ -570,7 +579,7 @@ static int rk_fb_io_enable(void)
 
 #if defined(CONFIG_LCDC0_RK3066B) || defined(CONFIG_LCDC0_RK3188)
 struct rk29fb_info lcdc0_screen_info = {
-	.prop	   = PRMRY,		//primary display device
+	.prop	   = EXTEND,		//External display device DR15032014
 	.io_init   = rk_fb_io_init,
 	.io_disable = rk_fb_io_disable,
 	.io_enable = rk_fb_io_enable,
@@ -581,7 +590,7 @@ struct rk29fb_info lcdc0_screen_info = {
 #if defined(CONFIG_LCDC1_RK3066B) || defined(CONFIG_LCDC1_RK3188)
 struct rk29fb_info lcdc1_screen_info = {
 	#if defined(CONFIG_RK_HDMI)
-	.prop		= PRMRY,	//extend display device
+	.prop		= PRMRY,	//primary display device
 	.lcd_info  = NULL,
 	.set_screen_info = hdmi_init_lcdc,
 	#endif
@@ -1217,19 +1226,20 @@ static struct rfkill_rk_platform_data rfkill_rk_platdata = {
     .type               = RFKILL_TYPE_BLUETOOTH,
 
     .poweron_gpio       = { // BT_REG_ON
-        .io             = INVALID_GPIO,
+#if defined(CONFIG_J22_GPIO)
+	    .io      = RK30_PIN3_PB5,
+#else
+	    .io      = INVALID_GPIO, //RK30_PIN3_PC7,
+#endif
         .enable         = GPIO_HIGH,
         .iomux          = {
             .name       = "bt_poweron",
-            //Normal RK30_PIN3_PC7, J22 RK30_PIN3_PB5, TVBOX RK30_PIN3_PD0
-#ifdef CONFIG_J22
-	    .fgpio      = RK30_PIN3_PB5,
-#else 
-#ifdef CONFIG_RFKILL_RK_POWERON_PIN3_PD0 
-	    .fgpio      = RK30_PIN3_PD0,
+            //Normal RK30_PIN3_PC7, J22 RK30_PIN3_PB5
+
+#if defined(CONFIG_J22_GPIO)
+	    .fgpio      = GPIO3_B5//RK30_PIN3_PB5,
 #else
 	    .fgpio      = RK30_PIN3_PC7,
-#endif
 #endif
         		   },
     	},
@@ -1779,6 +1789,7 @@ static  struct pmu_info  tps65910_ldo_info[] = {
 #ifdef CONFIG_REGULATOR_ACT8846
 #define PMU_POWER_SLEEP RK30_PIN0_PA1
 #define PMU_VSEL RK30_PIN3_PD3
+
 static struct pmu_info  act8846_dcdc_info[] = {
 	{
 		.name          = "act_dcdc1",   //ddr
@@ -1855,15 +1866,14 @@ static  struct pmu_info  act8846_ldo_info[] = {
 	},
 	{
 	        .name          = "act_ldo6",   //vcc_jetta
-//SAW volt set via kernel config, default 3300000, mk908 and some others
-//need 1800000 to get wifi/bt working properly
-//#ifdef CONFIG_ACT8846_LDO6_18V
-	        .min_uv         = 1800000, 
-	        .max_uv         = 1800000, 
-/*#else
-	        .min_uv        = 3300000,
-	        .max_uv        = 3300000,
-#endif*/
+//For Rainer's CS968 3.3V
+#ifdef CONFIG_ACT8846_LDO6_33
+	        .min_uv         = 3300000, 
+	        .max_uv         = 3300000, 
+#else
+	        .min_uv        = 1800000,
+	        .max_uv        = 1800000,
+#endif
 	},
 	{
 		.name          = "act_ldo7",   //vccio_wl
