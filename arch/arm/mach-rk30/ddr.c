@@ -1205,7 +1205,7 @@ uint32_t ddr_get_datatraing_addr(void)
         addr += (64-(addr&0x3F));
     }
     addr -= 0x60000000;
-    // find out col£¬row£¬bank
+    // find out col\A3\ACrow\A3\ACbank
     row = ddr_get_row();
     bank = ddr_get_bank();
     col = ddr_get_col();
@@ -1376,7 +1376,7 @@ __sramfunc void ddr_move_to_Config_state(void)
     }
 }
 
-//arg°üÀ¨bank_addrºÍcmd_addr
+//arg\B0\FC\C0\A8bank_addr\BA\CDcmd_addr
 void __sramlocalfunc ddr_send_command(uint32 rank, uint32 cmd, uint32 arg)
 {
     pDDR_Reg->MCMD = (start_cmd | (rank<<20) | arg | cmd);
@@ -1384,9 +1384,9 @@ void __sramlocalfunc ddr_send_command(uint32 rank, uint32 cmd, uint32 arg)
     while(pDDR_Reg->MCMD & start_cmd);
 }
 
-//¶ÔtypeÀàÐÍµÄDDRµÄ¼¸¸öcs½øÐÐDTT
-//0  DTT³É¹¦
-//!0 DTTÊ§°Ü
+//\B6\D4type\C0\E0\D0Íµ\C4DDR\B5Ä¼\B8\B8\F6cs\BD\F8\D0\D0DTT
+//0  DTT\B3É¹\A6
+//!0 DTTÊ§\B0\DC
 uint32_t __sramlocalfunc ddr_data_training(void)
 {
     uint32 value,cs,i,byte=2;
@@ -1423,7 +1423,7 @@ uint32_t __sramlocalfunc ddr_data_training(void)
                                       | ((pPHY_Reg->DATX8[i].DXDQSTR & 0x7)<<3)
                                       | (((pPHY_Reg->DATX8[i].DXDQSTR>>12) & 0x3)<<14);
     }
-    // send some auto refresh to complement the lost while DTT£¬//²âµ½1¸öCSµÄDTT×î³¤Ê±¼äÊÇ10.7us¡£×î¶à²¹2´ÎË¢ÐÂ
+    // send some auto refresh to complement the lost while DTT\A3\AC//\B2âµ½1\B8\F6CS\B5\C4DTT\D7î³¤Ê±\BC\E4\CA\C710.7us\A1\A3\D7\EE\B6à²¹2\B4\CEË¢\D0\C2
     if(cs > 1)
     {
         ddr_send_command(cs, REF_cmd, 0);
@@ -1549,7 +1549,7 @@ uint32_t __sramlocalfunc ddr_set_pll_3066(uint32_t nMHz, uint32_t set)
     uint32_t ret = 0;
     int delay = 1000;
     uint32_t pll_id=1;  //DPLL
-    //NOÒ»¶¨ÒªÅ¼Êý,NR¾¡Á¿Ð¡£¬jitter¾Í»áÐ¡
+    //NOÒ»\B6\A8ÒªÅ¼\CA\FD,NR\BE\A1\C1\BFÐ¡\A3\ACjitter\BEÍ»\E1Ð¡
     
     if(nMHz == 24)
     {
@@ -1640,7 +1640,8 @@ uint32_t __sramlocalfunc ddr_set_pll_rk3066b(uint32_t nMHz, uint32_t set)
         dpllvaluel = ddr_get_pll_freq(DPLL);
         gpllvaluel = ddr_get_pll_freq(GPLL);
 
-        if(ddr_rk3188_dpll_is_good == false)    //if rk3188 DPLL is bad,use GPLL
+#if !defined(CONFIG_RK3188T_DDR_OVERRIDE)
+        if (ddr_rk3188_dpll_is_good == false)     //if rk3188 DPLL is bad,use GPLL
         {
             if( (gpllvaluel < 200) ||(gpllvaluel > 2000))
             {
@@ -1668,7 +1669,7 @@ uint32_t __sramlocalfunc ddr_set_pll_rk3066b(uint32_t nMHz, uint32_t set)
                 ddr_select_gpll_div=1;    //DDR_CLCOK:200MHz-500MHz
             }
         }
-
+#endif
         if(ddr_select_gpll_div > 0)
         {
             if(ddr_select_gpll_div == 4)
@@ -3454,7 +3455,7 @@ void __sramfunc ddr_resume(void)
 }
 EXPORT_SYMBOL(ddr_resume);
 
-//»ñÈ¡ÈÝÁ¿£¬·µ»Ø×Ö½ÚÊý
+//\BB\F1È¡\C8\DD\C1\BF\A3\AC\B7\B5\BB\D8\D7Ö½\DA\CA\FD
 uint32 ddr_get_cap(void)
 {
     uint32 cap;
@@ -3625,7 +3626,7 @@ int ddr_init(uint32_t dram_speed_bin, uint32_t freq)
                                                                     (ddr_get_cap()>>20));
     ddr_adjust_config(mem_type);
     
-    if(ddr_rk3188_dpll_is_good == true)
+   if(ddr_rk3188_dpll_is_good == true)
    {
         if(freq != 0)
             value=ddr_change_freq(freq);

@@ -512,9 +512,11 @@ static struct rk_hdmi_platform_data rk_hdmi_pdata = {
 #ifdef CONFIG_FB_ROCKCHIP
 
 #define LCD_CS_PIN         INVALID_GPIO
+//#define LCD_CS_PIN         RK30_PIN1_PB5
 #define LCD_CS_VALUE       GPIO_HIGH
 
-#define LCD_EN_PIN         RK30_PIN0_PB0
+//#define LCD_EN_PIN         RK30_PIN0_PB0
+#define LCD_EN_PIN         RK30_PIN1_PB5
 #define LCD_EN_VALUE       GPIO_HIGH
 
 static int rk_fb_io_init(struct rk29_fb_setting_info *fb_setting)
@@ -579,7 +581,7 @@ static int rk_fb_io_enable(void)
 
 #if defined(CONFIG_LCDC0_RK3066B) || defined(CONFIG_LCDC0_RK3188)
 struct rk29fb_info lcdc0_screen_info = {
-	.prop	   = EXTEND,		//External display device DR15032014
+	.prop	   = PRMRY,		//External display device DR15032014
 	.io_init   = rk_fb_io_init,
 	.io_disable = rk_fb_io_disable,
 	.io_enable = rk_fb_io_enable,
@@ -2522,7 +2524,7 @@ static struct cpufreq_frequency_table dvfs_ddr_table_t[] = {
 };
 
 
-#if defined(CONFIG_RK3188T_OVERRIDE)
+#if defined(CONFIG_RK3188T_FREQ)
 //if you board is good for volt quality,select dvfs_arm_table_volt_level0
  #define dvfs_gpu_table dvfs_gpu_table_t
  #define dvfs_ddr_table dvfs_ddr_table_t
@@ -2573,7 +2575,7 @@ void __init board_clock_init(void)
 	//dvfs_set_arm_logic_volt(dvfs_cpu_logic_table, cpu_dvfs_table, dep_cpu2core_table);	
 	dvfs_set_freq_volt_table(clk_get(NULL, "cpu"), dvfs_arm_table);
 	dvfs_set_freq_volt_table(clk_get(NULL, "gpu"), dvfs_gpu_table);
-#if defined(CONFIG_RK3188T_OVERRIDE)
+#if defined(CONFIG_RK3188T_FREQ)
 //	if (rk_pll_flag() == 0)
 //		dvfs_set_freq_volt_table(clk_get(NULL, "ddr"), dvfs_ddr_table);
 //	else

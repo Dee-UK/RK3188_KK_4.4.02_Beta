@@ -54,5 +54,4 @@ obj-$(CONFIG_SND_RK_SOC_HDMI_I2S) += snd-soc-hdmi-i2s.o
 obj-$(CONFIG_SND_RK_SOC_HDMI_SPDIF) += snd-soc-hdmi-spdif.o
 obj-$(CONFIG_SND_RK_SOC_RK2928) += snd-soc-rk2928.o
 obj-$(CONFIG_SND_RK_SOC_RK3026) += snd-soc-rk3026.o
-snd-soc-es8323-objs := rk29_es8323.o
 obj-$(CONFIG_SND_RK29_SOC_ES8323) += snd-soc-es8323.o
