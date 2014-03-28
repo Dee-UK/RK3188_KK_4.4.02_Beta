@@ -581,7 +581,7 @@ static int rk_fb_io_enable(void)
 
 #if defined(CONFIG_LCDC0_RK3066B) || defined(CONFIG_LCDC0_RK3188)
 struct rk29fb_info lcdc0_screen_info = {
-	.prop	   = PRMRY,		//External display device DR15032014
+	.prop	   = EXTEND,		//External display device DR15032014
 	.io_init   = rk_fb_io_init,
 	.io_disable = rk_fb_io_disable,
 	.io_enable = rk_fb_io_enable,
@@ -894,7 +894,7 @@ static struct platform_device device_ion = {
  * SDMMC devices,  include the module of SD,MMC,and sdio.noted by xbw at 2012-03-05
 **************************************************************************************************/
 #ifdef CONFIG_SDMMC_RK29
-#include "../mach-rk30/board-rk3168-tb-sdmmc-conifg.c"
+#include "../mach-rk30/board-rk3168-tb-sdmmc-config.c"
 #include "../plat-rk/rk-sdmmc-ops.c"
 #include "../plat-rk/rk-sdmmc-wifi.c"
 #endif //endif ---#ifdef CONFIG_SDMMC_RK29
@@ -1509,6 +1509,16 @@ static int rk_platform_add_display_devices(void)
 	
 }
 
+#if defined(CONFIG_RK1000_TVOUT) || defined(CONFIG_MFD_RK1000)
+static struct rkdisplay_platform_data tv_data = {
+	.property 		= DISPLAY_AUX,
+	.video_source 	= DISPLAY_SOURCE_LCDC0,
+	.io_pwr_pin 	= INVALID_GPIO,
+	.io_reset_pin 	= RK30_PIN3_PD4,
+	.io_switch_pin	= INVALID_GPIO,
+};
+#endif
+
 // i2c
 #ifdef CONFIG_I2C0_RK30
 static struct i2c_board_info __initdata i2c0_info[] = {
@@ -1548,7 +1558,7 @@ static struct i2c_board_info __initdata i2c0_info[] = {
 		.platform_data = &l3g4200d_info,
 	},
 #endif
-#if defined (CONFIG_SND_SOC_RK1000)
+/*#if defined (CONFIG_SND_SOC_RK1000)
 	{
 		.type          = "rk1000_i2c_codec",
 		.addr          = 0x60,
@@ -1559,7 +1569,7 @@ static struct i2c_board_info __initdata i2c0_info[] = {
 		.addr          = 0x40,
 		.flags         = 0,
 	},
-#endif
+#endif*/
 #if defined (CONFIG_SND_SOC_RT5631)
         {
                 .type                   = "rt5631",
@@ -2169,7 +2179,29 @@ static struct i2c_board_info __initdata i2c4_info[] = {
 
      },
     #endif
-
+    #if defined (CONFIG_MFD_RK1000)
+	{
+		.type			= "rk1000_control",
+		.addr			= 0x40,
+		.flags			= 0,
+		.platform_data = &tv_data,
+	},
+	#ifdef CONFIG_RK1000_TVOUT
+   	 {
+		.type           = "rk1000_tvout",
+		.addr           = 0x42,
+		.flags          = 0,
+		.platform_data = &tv_data,
+    	},
+	#endif
+	#ifdef CONFIG_SND_SOC_RK1000
+   	 {
+		.type           = "rk1000_i2c_codec",
+		.addr           = 0x60,
+		.flags          = 0,
+    	},
+	#endif
+    #endif
 };
 #endif
 
